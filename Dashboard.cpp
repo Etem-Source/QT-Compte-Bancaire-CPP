@@ -134,7 +134,7 @@ void Dashboard::transfer()
         }
 
 
-        int destClientIndex = clientID;
+        int destClientIndex = clientID - 1;
         Client &destClient = otherClients[destClientIndex];
 
         // Demander le montant du virement
@@ -143,18 +143,20 @@ void Dashboard::transfer()
         if (ok && amount > 0 && amount <= currentClient.getSolde())
         {
             // Effectuer le virement entre les comptes
+           // destClient.getCompteBancaire().crediterCompte(amount);
             currentClient.getCompteBancaire().virementCompte(destClient.getCompteBancaire(), amount);
-            destClient.getCompteBancaire().crediterCompte(amount);
 
-            // Mettre à jour l'affichage du solde
-            balanceLabel->setText(QString("Votre solde est de : %1 €").arg(currentClient.getSolde()));
+            // Màj l'affichage du solde
+            balanceLabel->setText(QString("Votre solde est de : %1 € \n Le solde de CorentinG est de : %2 €")
+            .arg(currentClient.getSolde())
+            .arg(destClient.getSolde()));
 
-            // Afficher un message de confirmation
+            // Afficher confirmation
             QMessageBox::information(this, "Virement", QString("Vous avez transféré %1 € à : %2 %3 (ID : %4)")
-                                             .arg(amount)
-                                             .arg(QString::fromStdString(destClient.getPrenom()))
-                                             .arg(QString::fromStdString(destClient.getNom()))
-                                             .arg(clientID));
+            .arg(amount)
+            .arg(QString::fromStdString(destClient.getPrenom()))
+            .arg(QString::fromStdString(destClient.getNom()))
+            .arg(clientID));
         }
         else if (ok)
         {
